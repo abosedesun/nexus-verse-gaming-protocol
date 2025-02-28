@@ -52,3 +52,85 @@
 (define-data-var total-assets uint u0)
 (define-data-var total-avatars uint u0)
 (define-data-var total-worlds uint u0)
+
+;; Access Control
+
+(define-map protocol-admin-whitelist principal bool)
+
+;; NFT Definitions
+
+(define-non-fungible-token nexus-asset uint)
+(define-non-fungible-token nexus-avatar uint)
+
+;; Data Maps
+
+;; Asset Metadata
+(define-map nexus-asset-metadata 
+  { token-id: uint }
+  { 
+    name: (string-ascii 50),
+    description: (string-ascii 200),
+    rarity: (string-ascii 20),
+    power-level: uint,
+    world-id: uint,
+    attributes: (list 10 (string-ascii 20)),
+    experience: uint,
+    level: uint
+  }
+)
+
+;; Avatar System
+(define-map avatar-metadata
+  { avatar-id: uint }
+  {
+    name: (string-ascii 50),
+    level: uint,
+    experience: uint,
+    achievements: (list 20 (string-ascii 50)),
+    equipped-assets: (list 5 uint),
+    world-access: (list 10 uint)
+  }
+)
+
+;; Virtual Worlds
+(define-map game-worlds
+  { world-id: uint }
+  {
+    name: (string-ascii 50),
+    description: (string-ascii 200),
+    entry-requirement: uint,
+    active-players: uint,
+    total-rewards: uint
+  }
+)
+
+;; Competitive Leaderboard
+(define-map leaderboard 
+  { player: principal }
+  { 
+    score: uint, 
+    games-played: uint,
+    total-rewards: uint,
+    avatar-id: uint,
+    rank: uint,
+    achievements: (list 20 (string-ascii 50))
+  }
+)
+
+;; Validation Functions
+
+(define-private (is-valid-name (name (string-ascii 50)))
+  (and 
+    (>= (len name) u1)
+    (<= (len name) u50)
+    (not (is-eq name ""))
+  )
+)
+
+(define-private (is-valid-description (description (string-ascii 200)))
+  (and 
+    (>= (len description) u1)
+    (<= (len description) u200)
+    (not (is-eq description ""))
+  )
+)
